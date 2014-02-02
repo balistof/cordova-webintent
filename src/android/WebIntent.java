@@ -89,7 +89,20 @@ public class WebIntent extends CordovaPlugin {
                 String extraName = args.getString(0);
                 if (i.hasExtra(extraName)) {
                     //return new PluginResult(PluginResult.Status.OK, i.getStringExtra(extraName));
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, i.getStringExtra(extraName)));
+                    //callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, i.getStringExtra(extraName)));
+                    String type = i.getType();
+                    String extra = null;
+                    JSONObject result = new JSONObject();
+                    result.put("type", type);
+                    if ("text/plain".equals(type)) {
+                        extra = i.getStringExtra(extraName);
+                    } else if (type.startsWith("image/")) {
+                        Uri uri = (Uri) i.getParcelableExtra(extraName);
+                        extra = uri.toString();
+                    }
+                    result.put("extra", extra);
+
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, result));
                     return true;
                 } else {
                     //return new PluginResult(PluginResult.Status.ERROR);
